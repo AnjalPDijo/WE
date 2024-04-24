@@ -1,0 +1,20 @@
+.admin-dashboard {
+    padding: 20px;
+  }
+  
+  .data-section {
+    margin-bottom: 30px;
+  }
+  
+  .data-section h2 {
+    margin-bottom: 10px;
+  }
+  
+  .data-section ul {
+    list-style: none;
+  }
+  
+  .data-section ul li {
+    margin-bottom: 5px;
+  }
+  

@@ -57,9 +57,9 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import Back from '../common/Back';
-import './login.css';
+import './Signin.css';
 import img from '../assets/images/home/abimg.jpg';
-const Login = () => {
+const Signin = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
     name: '',
@@ -110,4 +110,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signin;

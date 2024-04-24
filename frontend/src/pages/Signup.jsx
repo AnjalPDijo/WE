@@ -4,9 +4,9 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import Back from '../common/Back';
 import img from '../assets/images/home/abimg.jpg';
-import './Register.css';
+import './Signup.css';
 
-const Register = () => {
+const Signup = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: '',
@@ -67,4 +67,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default Signup;

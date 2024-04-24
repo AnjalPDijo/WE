@@ -2,8 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from '../src/Components/Navbar';
 import Home from '../src/pages/Home';
-import SignUp from './pages/Register';
-import SignIn from './pages/Login';
+import Signup from './pages/Signup';
+import Signin from './pages/Signin';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Calculator from './common/calculator/calculator';
@@ -26,8 +26,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
+        <Route path="/signin" element={<Signin />} />
+        <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/loandetails" element={<LoanApplicationForm />} />

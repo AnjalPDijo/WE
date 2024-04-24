@@ -1,0 +1,12 @@
+/* Assuming this is your CSS file (e.g., Contact.css) */
+
+/* Style the placeholder text for all input fields */
+input::placeholder {
+    color: #999; /* Change to your desired color */
+  }
+  
+.contact
+{
+    margin-bottom: 500px;
+}
+  

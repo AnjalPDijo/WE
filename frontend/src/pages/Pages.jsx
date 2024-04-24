@@ -3,8 +3,8 @@ import { Route } from 'react-router-dom';
 import Header from '../common/header/header';
 import Home from '../pages/Home';
 import Footer from '../common/footer/footer';
-import Register from './Register';
-import Login from './Login';
+import Signup from './Signup';
+import Signin from './Signin';
 import Services from '../services/services';
 import About from './About'; 
 import Contact from './Contact'; 
@@ -20,8 +20,8 @@ const Pages = () => {
       <Route exact path="/" component={Home} />
       <Route path="/about" component={About} />
       <Route path="/services" component={Services} />
-      <Route path="/signin" component={Login} />
-      <Route path="/signup" component={Register} />
+      <Route path="/signin" component={Signin} />
+      <Route path="/signup" component={Signup} />
       <Route path="/contact" component={Contact} />
       {/* Add routes for LoanDetails and Calculator */}
       {/* Replace LoanDetails and Calculator with the actual components */}
