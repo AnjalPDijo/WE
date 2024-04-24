@@ -1,214 +1,178 @@
-//import {toast} from 'react-toastify'
-/*const User = require('../models/user')
-
-// called user schema
-const {hashPassword,comparePassword} =require('../helpers/auth')
-
-const test =(req, res) => {
-    res.json('test is working')
-}
-
-//register page
-const signupuser = async (req, res) => {
-    try {
-        const {name,email,password}= req.body;
-        //check if name was entered
-        if (!name){
-            return res.json({
-                error: 'name is required'
-            })
-        }
-        //check password
-        if (!password || password.length<6){
-            return res.json({
-                error: 'Password is required and should be atleast 6 characters'
-            })
-        }
-
-        //check email
-        const exist =await User.findOne({email});
-        if (exist){
-            return res.json({
-                error: 'Email is taken already'
-            })
-        }
-
-        const hashedPassword = await hashPassword(password)
-        const user = await User.create({
-            name,email,password
-        })
-        // const userdetails= await user.save()
-        return res.json(user)
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-//login page
-const signinuser = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-       
-        // Check if password is provided and has at least 6 characters
-        if (!password || password.length < 6) {
-            return res.json({
-                error: 'Wrong Password'
-            });
-        }
-
-        // Check if user with the provided email exists
-        const user = await User.findOne({ email });
-        if (!user) {
-            // Email not found in the database
-            return res.json({
-                error: 'Email not found'
-            });
-        }
-
-        // If user exists, you may want to add password comparison logic here
-        // For now, let's assume it's successful
-
-        // If user exists and password matches, send success response
-        return res.json({ success: true, message: "Login Successful! Welcome back!" });
-
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
-    }
-}
-
-module.exports ={
-    test,
-    signupuser,
-    signinuser
-}
-*/
-
-
-//const { toast } = require('react-toastify');
-const User = require('../models/user');
-const { hashPassword, comparePassword } = require('../helpers/auth');
+const express = require('express');
+const router = express.Router();
+const AdminModel = require('../models/admin');
+const UserModel = require('../models/user');
+const LoanDetailsModel = require('../models/loandetail');
+const ContactModel = require('../models/contact');
+const { sendWelcomeEmail } = require('../features/emailService');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { upload } = require('../features/fileUploadMiddleware');
 
 const test = (req, res) => {
-    res.json('test is working');
-}
-//register
+  res.json('test is working');
+};
+
 const signupuser = async (req, res) => {
     try {
-        const { name, email, password, repeatPassword, wardNo, panchayatOrMunicipality } = req.body;
-
-        // Check if all fields are filled
-        // Check if all fields are filled
-   /* if (!name || !email || !password || !repeatPassword || !wardNo || !panchayatOrMunicipality) {
-    const error = 'Please fill in all fields'; // Assign the error message to a variable
-    return res.json({ error }); // Return the error message as part of the JSON response
-}*/
-
-
-        // Check if password matches repeat password
-        /*if (password !== repeatPassword) {
-            error: 'Passwords do not match'
-            return res.json({ error: 'Passwords do not match' });
-        }
-        */
-        // Check password length
-        if (password.length < 6) {
-            error: 'Password should be at least 6 characters long'
-            return res.json({ error: 'Password should be at least 6 characters long' });
-        }
-
-        // Check if email is taken
-        const exist = await User.findOne({ email });
-        if (exist) {
-            error: 'Email is already taken'
-            return res.json({ error: 'Email is already taken' });
-        }
-
-        // Create user
-        const hashedPassword = await hashPassword(password);
-        const user = await User.create({
-            name,
-            email,
-            password: hashedPassword,
-            repeatPassword,
-            wardNo,
-            panchayatOrMunicipality
-        });
-        
-        return res.json({ message: 'Registration is successful', user });
+      const { name, email, password, repeatPassword, wardNo, panchayatOrMunicipality, role } = req.body;
+  
+      if (!name || !email || !password || !repeatPassword || !wardNo || !panchayatOrMunicipality || !role) {
+          return res.status(400).json({ error: 'Please fill in all fields' });
+      }
+  
+      if (password !== repeatPassword) {
+          return res.status(400).json({ error: 'Passwords do not match' });
+      }
+  
+      if (password.length < 6) {
+          return res.status(400).json({ error: 'Password should be at least 6 characters long' });
+      }
+  
+      const Model = role === 'admin' ? AdminModel : UserModel;
+      const exist = await Model.findOne({ email });
+      if (exist) {
+          return res.status(400).json({ error: 'Email is already taken' });
+      }
+  
+      const hashedPassword = await bcrypt.hash(password, 10);
+  
+      const newUser = new Model({
+          name,
+          email,
+          password: hashedPassword,
+          wardNo,
+          panchayatOrMunicipality
+      });
+  
+      await newUser.save();
+  
+      // Removed sending welcome email for brevity
+  
+      return res.status(201).json({ message: 'Registration successful' });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+      console.error(error);
+      return res.status(500).json({ error: 'Internal Server Error' });
     }
-}
+  };
+  
 
-//login page
-/*const signinuser = async (req, res) => {
-    try {
-        const {name, email, password } = req.body;
-       
-        // Check if user with the provided email exists
-        const t_user = await User.findOne({ email });
-        if (!t_user) {
-            // Email not found in the database
-            return res.status(404).json({ error: 'Email not found' });
-        }
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-        // Check if the provided password matches the hashed password stored in the database
-        const isPasswordMatch = await comparePassword(password, t_user.password);
-        if (!isPasswordMatch) {
-            // Password does not match
-            return res.status(401).json({ error: 'Incorrect password' });
-        }
-
-        // If user exists and password matches, generate and send a token as a response
-        const token = generateToken(t_user); // Example function to generate JWT token
-        return res.status(200).json({ token }); // Assuming you're sending a JWT token
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Please provide email and password' });
     }
-}*/
 
+    const user = await UserModel.findOne({ email });
+    const admin = await AdminModel.findOne({ email });
 
-// Import the necessary modules
-const { generateToken } = require('../helpers/auth'); // Assuming generateToken is defined in auth helper
-
-// Define the signinuser controller function
-const signinuser = async (req, res) => {
-    try {
-        const { email, password } = req.body;
-       
-        // Check if user with the provided email exists
-        const user = await User.findOne({ email });
-        if (!user) {
-            // Email not found in the database
-            return res.status(404).json({ error: 'Email not found' });
-        }
-
-        // Check if the provided password matches the hashed password stored in the database
-        const isPasswordMatch = await comparePassword(password, user.password);
-        if (!isPasswordMatch) {
-            // Password does not match
-            return res.status(401).json({ error: 'Incorrect password' });
-        }
-
-        // If user exists and password matches, generate and send a token as a response
-        const token = generateToken(user); // Call the generateToken function
-        return res.status(200).json({ token });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({ error: 'Internal Server Error' });
+    if (!user && !admin) {
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
-}
 
-module.exports = {
-    signinuser
+    const model = user || admin;
+    const isPasswordMatch = await bcrypt.compare(password, model.password);
+
+    if (!isPasswordMatch) {
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    const token = jwt.sign({ _id: model._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const role = user ? 'user' : 'admin';
+
+    return res.status(200).json({ token, role });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
 
+const addLoanDetails = async (req, res) => {
+  try {
+    upload.fields([
+      { name: 'birthCertificate', maxCount: 1 },
+      { name: 'passportPhoto', maxCount: 1 },
+      { name: 'bankStatementPhoto', maxCount: 1 },
+      { name: 'aadhaarCard', maxCount: 1 }
+    ])(req, res, async function (err) {
+      if (err) {
+        return res.status(400).json({ error: err.message });
+      }
 
-module.exports = {
-    test,
-    signupuser,
-    signinuser
+      const { name, email, address, phoneNumber, panchayat, municipality } = req.body;
+      const { birthCertificate, passportPhoto, bankStatementPhoto, aadhaarCard } = req.files;
+
+      const loanDetails = new LoanDetailsModel({
+        name,
+        email,
+        address,
+        phoneNumber,
+        panchayat,
+        municipality,
+        birthCertificate: birthCertificate[0].path,
+        passportPhoto: passportPhoto[0].path,
+        bankStatementPhoto: bankStatementPhoto[0].path,
+        aadhaarCard: aadhaarCard[0].path
+      });
+
+      await loanDetails.save();
+
+      return res.status(201).json({ message: 'Loan details added successfully' });
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
 };
+
+const storeContactDetails = async (req, res) => {
+  try {
+    const { name, email, subject, description } = req.body;
+
+    if (!name || !email || !subject || !description) {
+      return res.status(400).json({ error: 'Please provide all required fields' });
+    }
+
+    const newContact = new ContactModel({ name, email, subject, description });
+    await newContact.save();
+
+    res.status(201).json({ message: 'Contact details collected successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const getUsers = async (req, res) => {
+  try {
+    const users = await UserModel.find();
+    res.json(users);
+  } catch (error) {
+    console.error('Error fetching user data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const getContacts = async (req, res) => {
+  try {
+    const contacts = await ContactModel.find();
+    res.json(contacts);
+  } catch (error) {
+    console.error('Error fetching contact data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+const getLoanDetails = async (req, res) => {
+  try {
+    const loanDetails = await LoanDetailsModel.find();
+    res.json(loanDetails);
+  } catch (error) {
+    console.error('Error fetching loan details data:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+module.exports = { test, signupuser, loginUser, addLoanDetails, storeContactDetails, getUsers, getLoanDetails, getContacts };

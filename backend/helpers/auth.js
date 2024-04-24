@@ -28,7 +28,7 @@ module.exports ={
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const secretKey = 'your_secret_key'; // Replace with your actual secret key
+const secretKey = '901684c86e10acbd7c5fe628075a1441413c6f5e4f96df59bc731f2fb8c53d2d'; // Replace with your actual secret key
 
 // Function to generate JWT token
 const generateToken = (user) => {

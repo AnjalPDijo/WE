@@ -50,13 +50,14 @@
 }
 body {
   font-family: "Poppins", sans-serif;
-  background-color: #136e44;
+  background-color: #d0ccd0;
+  
   
 }
 .container {
   max-width: 80%;
   margin: auto;
-
+  
  
 }
 .flex {
@@ -91,13 +92,13 @@ button i {
   margin: auto;
 }
 .heading h1 {
-  color: #2d3954;
+  color: #221705;
   font-weight: 600;
   text-transform: capitalize;
   font-size: 35px;
 }
 .heading p {
-  color: #72809d;
+  color: #292303;
 }
 textarea,
 input {
@@ -129,6 +130,7 @@ h4 {
 }
 .shadow {
   box-shadow: 0 0 20px 0 rgb(112 121 138 / 18%);
+ 
 }
 .padding {
   padding: 80px 0;
@@ -146,6 +148,7 @@ img {
 .btn2 {
   border-radius: 50px;
   font-size: 20px;
+
   /* margin-left: 600px; */
 }
 .grid4 {
@@ -160,6 +163,7 @@ img {
 .btn4 {
   background-color: #000;
   color: #fff;
+  margin-bottom: 10px;
 }
 .btn5 {
   /* border-radius: 50px;

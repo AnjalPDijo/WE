@@ -1,18 +1,27 @@
 .navbar {
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(30px);
-    transition: background-color 0.3s ease-in-out;
-  }
-  
-  .navbar-scrolled {
-    background: rgba(136, 121, 121, 0.9); /* Adjust opacity as needed */
-  }
-  
-  .navbar-brand {
-    font-weight: bold;
-  }
-  
-  .nav-link {
-    font-weight: 500;
-  }
-  
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(30px);
+  transition: background-color 0.3s ease-in-out;
+}
+
+.navbar-scrolled {
+  background: rgba(136, 121, 121, 0.9); /* Adjust opacity as needed */
+}
+
+.navbar-brand {
+  font-weight: bold;
+}
+
+.nav-link {
+  font-weight: 500;
+}
+.navbar-brand img {
+  width: 100px; /* Adjust the width as needed */
+  height: auto; /* Maintain aspect ratio */
+  margin-right: 10px; /* Optional: Add margin to separate from other navbar content */
+  margin-top: 5px; /* Optional: Adjust top margin for positioning */
+  position: relative;
+  top: 0;
+  left: 0;
+}
+

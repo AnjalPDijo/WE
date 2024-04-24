@@ -6,6 +6,7 @@ const LoanCalculator = () => {
   const [interestRate, setInterestRate] = useState('');
   const [loanDuration, setLoanDuration] = useState('');
   const [monthlyPayment, setMonthlyPayment] = useState(0);
+  const [remainingAmount, setRemainingAmount] = useState(0);
 
   const calculateMonthlyPayment = () => {
     const principal = parseFloat(loanAmount);
@@ -13,13 +14,15 @@ const LoanCalculator = () => {
     const term = parseFloat(loanDuration) * 12;
 
     const monthlyPayment = (principal * rate) / (1 - Math.pow(1 + rate, -term));
-
     setMonthlyPayment(monthlyPayment.toFixed(2));
+
+    const remainingAmount = monthlyPayment * term;
+    setRemainingAmount(remainingAmount.toFixed(2));
   };
 
   return (
     <div className="loan-calculator">
-      <h2>Loan Calculator (INR)</h2>
+      <h2 style={{ marginTop: '-150px' }}>Loan Calculator (INR)</h2>
       <div className="input-group">
         <label>Loan Amount (₹)</label>
         <input 
@@ -45,10 +48,12 @@ const LoanCalculator = () => {
           onChange={(e) => setLoanDuration(e.target.value)}
         />
       </div>
-      <button onClick={calculateMonthlyPayment} class="btn">Calculate</button>
+      <button onClick={calculateMonthlyPayment} className="yn">Calculate</button>
       {monthlyPayment > 0 && (
         <div className="result">
           Monthly Payment: ₹{monthlyPayment}
+          <br />
+          Remaining Amount to be Paid: ₹{remainingAmount}
         </div>
       )}
     </div>
