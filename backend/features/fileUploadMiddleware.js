@@ -1,15 +1,16 @@
 const multer = require('multer');
+const path = require('path');
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/') // Specify the directory where files will be uploaded
+    cb(null, 'uploads/files'); // Specify the directory where files will be uploaded
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname) // Use the original filename
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + path.extname(file.originalname)); // Use a unique filename
   }
 });
 
-// Define fileFilter function directly within the same file
 const fileFilter = (req, file, cb) => {
   // Allow only PDF files
   if (file.mimetype === 'application/pdf') {
@@ -27,4 +28,4 @@ const upload = multer({
   fileFilter: fileFilter // Use the fileFilter function
 });
 
-module.exports = { upload, storage, multer, fileFilter }; // Export fileFilter along with other configurations
+module.exports = { upload, storage, multer, fileFilter };

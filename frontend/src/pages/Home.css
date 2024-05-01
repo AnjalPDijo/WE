@@ -1,103 +1,8 @@
-/*.Home {
-  background-image: url("../assets/images/home/Homeimg.jpg");
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: cover;
-  height: 100vh;
-  width: 100vw;
-}
-.root{
-  width:100%;
-}
-.flex {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.Home .container {
-  padding-top: 5%;
-}
-
-.Home h1 {
-  color: #252121;
-  font-size: 60px;
-}
-
-.Home p {
-  color: #151414;
-  opacity: 0.8;
-}
-
-form {
-  background-color: #08780a27;
-  border-radius: 5px;
-  margin-top: 100px;
-  padding: 0 20px;
-}
-
-form input {
-  padding: 10px;
-  width: 100%;
-  border: 1px solid rgba(53, 28, 28, 0.2);
-  margin-top: 5px;
-  border-radius: 5px;
-}
-
-form span {
-  font-size: 14px;
-  color: rgb(18, 6, 6);
-  font-weight: 700;
-}
-
-input::placeholder {
-  font-size: 17px;
-  color: rgb(189, 176, 176);
-}
-
-form .box {
-  padding: 15px;
-  border-left: 1px solid rgba(0, 0, 0, 0.941);
-}
-
-form .box:first-child {
-  border-left: none;
-}
-
-form h4 {
-  font-weight: 500;
-}
-
-@media screen and (max-width: 800px) {
-  .Home .container {
-    padding-top: 30%;
-  }
-
-  form {
-    display: flex;
-    flex-wrap: wrap;
-  }
-
-  form .box {
-    border-left: none;
-  }
-
-  form input {
-    width: 100%;
-  }
-
-  .btn5 {
-    padding-bottom: 100px;
-  }
-}
-*/
-
-
 .Home {
   position: relative;
   height: 100vh;
   width: 100vw;
-  background-image: url("../assets/images/home/loan.jpg");
+  background-image: url("../assets/images/home/Homeimg.jpg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: cover;
@@ -110,19 +15,20 @@ form h4 {
   left: 0;
   width: 100%;
   height: 100%;
-  backdrop-filter: blur(4px); /* Adjust blur intensity as needed */
+  backdrop-filter: blur(1px);
 }
 
 .content {
   position: relative;
-  z-index: 1; /* Ensure content is above the blur overlay */
-  color: #fff; /* Example text color */
-  padding: 20px; /* Example padding */
+  z-index: 1;
+  color: #fff;
+  padding: 20px;
 }
 
-.root{
-  width:100%;
+.root {
+  width: 100%;
 }
+
 .flex {
   display: flex;
   justify-content: space-between;
@@ -148,7 +54,6 @@ form {
   border-radius: 5px;
   margin-top: 100px;
   padding: 0 20px;
- 
 }
 
 form input {
@@ -200,6 +105,4 @@ form h4 {
   form input {
     width: 100%;
   }
-
- 
 }

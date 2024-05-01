@@ -1,4 +1,4 @@
-// loandetail.js
+
 
 const mongoose = require('mongoose');
 

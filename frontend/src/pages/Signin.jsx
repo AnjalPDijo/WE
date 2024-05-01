@@ -1,55 +1,130 @@
-/*import React, { useState } from 'react';
+/*
+import React, { useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import Back from '../common/Back';
+import './Signin.css';
+import img from '../assets/images/home/abimg.jpg';
 
-const Login = () => {
+const Signin = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
     email: '',
     password: ''
   });
 
-  const LoginUser = async (e) => {
-    e.preventDefault();
-    const { email, password } = data;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value });
+  };
+
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  
     try {
       const response = await axios.post('/signin', {
-        email,
-        password
+        email: data.email, 
+        password: data.password
       });
       const responseData = response.data;
-      if (responseData.error) {
-        toast.error(responseData.error);
-      } else {
-        setData({ email: '', password: '' });
-        toast.success("Login Successful! Welcome to our Website");
-        navigate('/');
-      }
-    } catch (error) {
-      console.log(error);
-      toast.error('An error occurred. Please try again.');
+      if (responseData) {
+        toast.success(response.data.message)
+        navigate('/grading');
+        }
+        
+    } 
+    catch (error) {
+      toast.error(error.response.data.message);
     }
   };
 
+
+
+
   return (
     <section className='contact mb'>
+      <Back title='Please Login And Get Our Help' name='Sign In' cover={img} />
       <div className='container'>
-        <form className='shadow' onSubmit={LoginUser}>
+        <form className='shadow' onSubmit={handleSubmit} style={{ marginTop: '30px' }}>
           <h4>Please enter the login details</h4>
           <div>
-            <input type='text' placeholder='Email' value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} />
+            <input type='text' placeholder='Email' name='email' value={data.email} onChange={handleInputChange} />
+            <input type='password' placeholder='Password' name='password' value={data.password} onChange={handleInputChange} />
           </div>
-          <input type='password' placeholder='Password' value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} />
-          <p className="forgot"><b><u>Forgot Password</u></b></p>
-          <button className="btn5" type='submit'>Login</button>
+          
+          <button className="b1" type='submit' style={{ marginBottom: '-1px', marginLeft: '400px' }}>Login</button>
         </form>
       </div>
     </section>
   );
 };
 
-export default Login;
+export default Signin;
+*/
+/*
+import React, { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import Back from '../common/Back';
+import './Signin.css';
+import img from '../assets/images/home/abimg.jpg';
+
+const Signin = () => {
+  const navigate = useNavigate();
+  const [data, setData] = useState({
+    email: '',
+    password: ''
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value });
+  };
+
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  
+    try {
+      const response = await axios.post('/signin', {
+        email: data.email, 
+        password: data.password
+      });
+      const responseData = response.data;
+      if (responseData) {
+        toast.success(response.data.message)
+        navigate('/grading');
+      }
+        
+    } 
+    catch (error) {
+      toast.error(error.response.data.message);
+    }
+  };
+
+  return (
+    <section className='contact mb'>
+      <Back title='Please Login And Get Our Help' name='Sign In' cover={img} />
+      <div className='container'>
+        <form className='shadow' onSubmit={handleSubmit} style={{ marginTop: '30px' }}>
+          <h4>Please enter the login details</h4>
+          <div>
+            <input type='text' placeholder='Enter Email' name='email' value={data.email} onChange={handleInputChange} style={{ width: '100%' }}/>
+            <input type='password' placeholder='Enter Password' name='password' value={data.password} onChange={handleInputChange}style={{ width: '100%' }} />
+          </div>
+          
+          <button className="b1" type='submit' style={{ marginBottom: '-1px', marginLeft: '0' }}>Login</button>
+        </form>
+      </div>
+    </section>
+  );
+};
+
+export default Signin;
+
 */
 
 import React, { useState } from 'react';
@@ -59,51 +134,56 @@ import { useNavigate } from 'react-router-dom';
 import Back from '../common/Back';
 import './Signin.css';
 import img from '../assets/images/home/abimg.jpg';
+import Navbar from '../Components/Navbar'; // Import the Navbar component
+
 const Signin = () => {
   const navigate = useNavigate();
   const [data, setData] = useState({
-    name: '',
     email: '',
     password: ''
   });
 
-  const LoginUser = async (e) => {
-    e.preventDefault();
-    const { name, email, password } = data;
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setData({ ...data, [name]: value });
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+  
     try {
       const response = await axios.post('/signin', {
-        name,
-        email,
-        password
+        email: data.email, 
+        password: data.password
       });
       const responseData = response.data;
-      if (responseData.error) {
-        toast.error(responseData.error);
-      } else {
-        setData({ name: '', email: '', password: '' });
-        toast.success("Login Successful! Welcome to our Website");
-        navigate('/');
+      if (responseData) {
+        toast.success(response.data.message)
+        navigate('/grading');
+  
+        // Redirect to grading page after successful login
+        //navigate('/grading');
+
+        // Pass user email to Navbar component
+        <Navbar userEmail={data.email} />;
       }
+          
     } catch (error) {
-      console.log(error);
-      toast.error('An error occurred. Please try again.');
+      toast.error(error.response.data.message);
     }
   };
 
   return (
     <section className='contact mb'>
-      {/* Include Back component here */}
-      <Back  title='Please Login And Get Our Help'name='Sign In' cover={img} />
+      <Back title='Please Login And Get Our Help' name='Sign In' cover={img} />
       <div className='container'>
-        <form className='shadow' onSubmit={LoginUser} style={{marginTop: '30px'}}>
+        <form className='shadow' onSubmit={handleSubmit} style={{ marginTop: '30px' }}>
           <h4>Please enter the login details</h4>
           <div>
-            <input type='text' placeholder='Name' value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })}/>
-            <input type='text' placeholder='Email' value={data.email} onChange={(e) => setData({ ...data, email: e.target.value })} />
+            <input type='text' placeholder='Enter Email' name='email' value={data.email} onChange={handleInputChange}/>
+            <input type='password' placeholder='Enter Password' name='password' value={data.password} onChange={handleInputChange} />
           </div>
-          <input type='password' placeholder='Password' value={data.password} onChange={(e) => setData({ ...data, password: e.target.value })} />
-          <p className="forgot"><b><u>Forgot Password</u></b></p>
-          <button className="b1" type='submit' style={{ marginBottom: '-1px', marginLeft: '400px' }}>Login</button>
+          <button className="b1" type='submit' style={{ marginBottom: '-1px', marginLeft: '0' }}>Login</button>
         </form>
       </div>
     </section>
@@ -111,3 +191,4 @@ const Signin = () => {
 };
 
 export default Signin;
+

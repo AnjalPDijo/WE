@@ -1,9 +1,12 @@
 const express = require('express');
 const router = express.Router();
+const multer = require('multer');
 const AdminModel = require('../models/admin');
 const UserModel = require('../models/user');
+const AdminIdModel = require('../models/adminid');
 const LoanDetailsModel = require('../models/loandetail');
 const ContactModel = require('../models/contact');
+const CheckModel = require('../models/check'); // Import the Check model
 const { sendWelcomeEmail } = require('../features/emailService');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -13,7 +16,7 @@ const test = (req, res) => {
   res.json('test is working');
 };
 
-const signupuser = async (req, res) => {
+const userSignup = async (req, res) => {
     try {
       const { name, email, password, repeatPassword, wardNo, panchayatOrMunicipality, role } = req.body;
   
@@ -57,75 +60,165 @@ const signupuser = async (req, res) => {
   };
   
 
+ // Import the AdminIdModel
+ 
+ 
+
+ const checkUnit = async (req, res) => {
+  const { district, unitNo, unitName } = req.body;
+
+  try {
+    const unit = await CheckModel.findOne({ 'District': district, 'Kudumbasree_Unit_No': unitNo, 'Kudumbasree_Unit_Name': unitName });
+
+    if (unit) {
+      return res.status(200).json({ exists: true, message: "Unit exists" });
+    } else {
+      return res.status(400).json({ exists: false, message: "Unit does not exist" });
+    }
+  } catch (error) {
+    console.error('Error checking unit:', error);
+    res.status(500).json({ error: 'An error occurred while checking the unit.' });
+  }
+};
+
+
+
+
+ 
+
+ 
+
+
+
+
+ 
+ 
+ 
+ 
+
+ 
+
+
+ 
+
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
+    // Check if email and password are provided
     if (!email || !password) {
       return res.status(400).json({ error: 'Please provide email and password' });
     }
 
+    // Find user by email in the database
     const user = await UserModel.findOne({ email });
-    const admin = await AdminModel.findOne({ email });
 
-    if (!user && !admin) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+    // If user not found, return login failed
+    if (!user) {
+      return res.status(400).json({ error: 'Login failed. User does not exist' });
     }
+    //const upassword = await UserModel.findOne({ password });
+    // Compare provided password with stored hashed password
+    console.log('Provided Password:', password);
+    console.log('Stored Password:', user.password);
 
-    const model = user || admin;
-    const isPasswordMatch = await bcrypt.compare(password, model.password);
 
-    if (!isPasswordMatch) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+    console.log('isPasswordMatch:', isPasswordMatch);
+
+    if (isPasswordMatch) {
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      res.cookie('token', token);
+      res.status(200).json({ message: 'Login successful', token });
+    } else {
+      return res.status(400).json({ error: 'Login failed. Invalid email or password' });
     }
-
-    const token = jwt.sign({ _id: model._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    const role = user ? 'user' : 'admin';
-
-    return res.status(200).json({ token, role });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+
+
+
+
+
+ 
+
+
+
+
+
+ 
+/*
+// Controller function to handle loan details submission
+const addLoanDetails = async (req, res) => {
+  try {
+    // Ensure that req.files exists and contains the expected properties
+    if (!req.files || !req.files.birthCertificate || !req.files.passportPhoto || !req.files.bankStatementPhoto || !req.files.aadhaarCard) {
+      return res.status(400).json({ message: 'Required files are missing' });
+    }
+
+    // Access uploaded files from req.files
+    const { birthCertificate, passportPhoto, bankStatementPhoto, aadhaarCard } = req.files;
+
+    // Logic to process and store the files, along with other form data
+    // For example:
+    // const { name, address, phoneNumber, email, municipality, panchayat } = req.body;
+    // Process and save the form data and files as needed
+
+    res.status(201).json({ message: 'Loan details saved successfully' });
+  } catch (error) {
+    console.error('Error processing loan details:', error);
+    res.status(500).json({ message: 'Failed to process loan details' });
+  }
+};
+
+*/
 
 const addLoanDetails = async (req, res) => {
   try {
-    upload.fields([
-      { name: 'birthCertificate', maxCount: 1 },
-      { name: 'passportPhoto', maxCount: 1 },
-      { name: 'bankStatementPhoto', maxCount: 1 },
-      { name: 'aadhaarCard', maxCount: 1 }
-    ])(req, res, async function (err) {
-      if (err) {
-        return res.status(400).json({ error: err.message });
-      }
+    const { name, email, address, phoneNumber, panchayat, municipality } = req.body;
+    
+    // Ensure that req.files exists and contains the expected properties
+    if (!req.files || !req.files.birthCertificate || !req.files.passportPhoto || !req.files.bankStatementPhoto || !req.files.aadhaarCard) {
+      return res.status(400).json({ message: 'Required files are missing' });
+    }
 
-      const { name, email, address, phoneNumber, panchayat, municipality } = req.body;
-      const { birthCertificate, passportPhoto, bankStatementPhoto, aadhaarCard } = req.files;
+    // Extract form data from req.body
+    
 
-      const loanDetails = new LoanDetailsModel({
-        name,
-        email,
-        address,
-        phoneNumber,
-        panchayat,
-        municipality,
-        birthCertificate: birthCertificate[0].path,
-        passportPhoto: passportPhoto[0].path,
-        bankStatementPhoto: bankStatementPhoto[0].path,
-        aadhaarCard: aadhaarCard[0].path
-      });
+    // Access uploaded files from req.files
+    
 
-      await loanDetails.save();
-
-      return res.status(201).json({ message: 'Loan details added successfully' });
+    // Process and store the form data and files
+    // For example, you can save them to your MongoDB database
+    const loanDetails = new LoanDetailsModel({
+      name,
+      email,
+      address,
+      phoneNumber,
+      panchayat,
+      municipality,
+      birthCertificate: birthCertificate.name, // Assuming you're storing file paths in MongoDB
+      passportPhoto: passportPhoto.name,
+      bankStatementPhoto: bankStatementPhoto.name,
+      aadhaarCard: aadhaarCard.name
     });
+
+    await loanDetails.save();
+
+    res.status(201).json({ message: 'Loan details saved successfully' });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    console.error('Error processing loan details:', error);
+    res.status(500).json({ message: 'Failed to process loan details' });
   }
 };
+
+  
+
+  
 
 const storeContactDetails = async (req, res) => {
   try {
@@ -145,34 +238,70 @@ const storeContactDetails = async (req, res) => {
   }
 };
 
-const getUsers = async (req, res) => {
+
+// adminController.js
+
+//const AdminModel = require('../models/AdminModel');
+//const UserModel = require('../models/UserModel');
+//const ContactModel = require('../models/ContactModel');
+//const LoanDetailsModel = require('../models/LoanDetailsModel');
+
+
+const adminDashboard = async (req, res) => {
+  const { adminid } = req.body;
+
   try {
-    const users = await UserModel.find();
-    res.json(users);
+    const admin = await AdminIdModel.findOne({ adminid });
+
+    if (admin) {
+      // Fetch data from user schema
+      const users = await UserModel.find();
+
+      // Fetch data from contact schema
+      const contacts = await ContactModel.find();
+
+      // Return data to frontend
+      return res.status(200).json({ users, contacts });
+    } else {
+      return res.status(401).json({ error: 'Invalid admin ID' });
+    }
   } catch (error) {
-    console.error('Error fetching user data:', error);
+    console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
-const getContacts = async (req, res) => {
+
+const getUser = async (req, res) => {
   try {
-    const contacts = await ContactModel.find();
-    res.json(contacts);
-  } catch (error) {
-    console.error('Error fetching contact data:', error);
+    const userId=req.userData.userId
+    console.log(userId)
+    if(!userId){
+      return res.status(200).json({message:'not authenticateed' });
+    }
+    const user = await UserModel.findOne({ _id:userId }).select('-password')
+    console.log(user)
+    if (user) {
+      return res.status(200).json({ user });
+    } else {
+      return res.status(401).json({ error: 'Invalid user ID' });
+    }
+  }catch{
     res.status(500).json({ error: 'Internal Server Error' });
   }
-};
-
-const getLoanDetails = async (req, res) => {
+}
+const logoutUser = async (req, res) => {
   try {
-    const loanDetails = await LoanDetailsModel.find();
-    res.json(loanDetails);
+      res.clearCookie('token');
+      res.status(200).json({ message: 'Logout successful' });
   } catch (error) {
-    console.error('Error fetching loan details data:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+      console.error('Logout failed:', error.message);
+      res.status(500).json({ message: 'Server error' });
   }
-};
+}
 
-module.exports = { test, signupuser, loginUser, addLoanDetails, storeContactDetails, getUsers, getLoanDetails, getContacts };
+module.exports = { adminDashboard };
+
+
+
+module.exports = { logoutUser,getUser,userSignup, loginUser, addLoanDetails, storeContactDetails,checkUnit , adminDashboard  };

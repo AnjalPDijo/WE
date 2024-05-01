@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
     unique: true
   },
   password: String,
-  repeatPassword: String, // Consider whether this field is necessary
   wardNo: {
     type: Number,
     required: true

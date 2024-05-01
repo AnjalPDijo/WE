@@ -1,12 +1,42 @@
 /* Assuming this is your CSS file (e.g., Contact.css) */
 
 /* Style the placeholder text for all input fields */
+
 input::placeholder {
-    color: #999; /* Change to your desired color */
+    color: #999; 
   }
   
 .contact
 {
     margin-bottom: 500px;
 }
-  
+
+/* Assuming this is your CSS file (e.g., Signup.css) */
+
+/* Style the placeholder text for all input fields */
+/*input::placeholder {
+  color: #999; 
+}
+
+.contact {
+  margin-bottom: 500px;
+}*/
+
+/* Style container for radio buttons */
+.radio-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px; /* Add margin bottom for spacing */
+}
+
+/* Style radio buttons */
+input[type='radio'] {
+  margin-right: 5px;
+  vertical-align: middle; /* Align radio buttons vertically */
+}
+
+/* Style radio button labels */
+label {
+  vertical-align: middle; /* Align labels vertically */
+}
+

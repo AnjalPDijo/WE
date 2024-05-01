@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './loanDetails.css';
+import './Loandetails.css';
 import Featured from '../Components/featured/Featured';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -18,9 +18,10 @@ function LoanApplicationForm() {
     aadhaarCard: null,
   });
 
+
   const handleChange = (e) => {
-    const { name, value, type } = e.target;
-    const updatedValue = type === 'file' ? e.target.files[0] : value;
+    const { name, type } = e.target;
+    const updatedValue = type === 'file' ? e.target.files[0] : e.target.value;
     
     setFormData({
       ...formData,
@@ -28,15 +29,67 @@ function LoanApplicationForm() {
     });
   };
   
-  const handleSubmit = async (e) => {
+  /*const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Check if all fields are filled
+    const formFields = Object.values(formData);
+    const areAllFieldsFilled = formFields.every(field => field !== '' && field !== null);
+    
+    if (!areAllFieldsFilled) {
+      toast.error("Please fill out all fields");
+      return;
+    }
+  
+    // Check if exactly four files are uploaded
+    const uploadedFiles = [formData.birthCertificate, formData.passportPhoto, formData.bankStatementPhoto, formData.aadhaarCard];
+    const numUploadedFiles = uploadedFiles.filter(file => file !== null).length;
+    
+    if (numUploadedFiles !== 4) {
+      toast.error("Please upload exactly four files");
+      return;
+    }
+  
     try {
       const formDataToSend = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
         formDataToSend.append(key, value);
       });
-
+  
+      const response = await axios.post('/loandetails', formDataToSend);
+      if (response.status === 201) {
+        // Clear form fields after successful submission
+        setFormData({
+          name: '',
+          address: '',
+          panchayat: '',
+          phoneNumber: '',
+          municipality: '',
+          email: '',
+          birthCertificate: null,
+          passportPhoto: null,
+          bankStatementPhoto: null,
+          aadhaarCard: null
+        });
+        toast.success("Loan Details collected successfully!");
+      } else {
+        toast.error("Failed to store details. Please try again later.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred. Please try again later.");
+    }
+  };
+  */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const formDataToSend = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        formDataToSend.append(key, value);
+      });
+  
       const response = await axios.post('/loandetails', formDataToSend);
       if (response.status === 201) {
         setFormData({
@@ -60,6 +113,7 @@ function LoanApplicationForm() {
       toast.error("An error occurred. Please try again later.");
     }
   };
+  
 
   return (
     <div className='center-content'>

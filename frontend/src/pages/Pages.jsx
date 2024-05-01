@@ -8,9 +8,10 @@ import Signin from './Signin';
 import Services from '../services/services';
 import About from './About'; 
 import Contact from './Contact'; 
-import LoanApplicationForm from './LoanDetails';
+import LoanApplicationForm from '../pages/Loandetails';
 import Calculator from '../common/calculator/calculator';
 import AdminDashboard from './AdminDashboard';
+import Grading from './Grading';
 
 
 const Pages = () => {
@@ -28,7 +29,8 @@ const Pages = () => {
       {/* Import the components if they are defined in separate files */}
       <Route path="/loandetails" component={LoanApplicationForm} /> 
       <Route path="/calculator" component={Calculator} />
-      <Route path="/admin-dashboard" component={AdminDashboard} />
+      <Route path="/dash" component={AdminDashboard} />
+      <Route path="/grading" component={Grading} />
 
       <Footer />
     </>

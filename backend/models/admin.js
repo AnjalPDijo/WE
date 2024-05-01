@@ -7,12 +7,15 @@ const adminSchema = new mongoose.Schema({
     unique: true
   },
   password: String,
-  repeatPassword: String, // Consider whether this field is necessary
   wardNo: {
     type: Number,
     required: true
   },
   panchayatOrMunicipality: {
+    type: String,
+    required: true
+  },
+  adminid: {
     type: String,
     required: true
   }

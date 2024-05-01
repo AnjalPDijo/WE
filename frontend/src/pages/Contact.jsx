@@ -53,7 +53,7 @@ const Contact = () => {
             </div>
             <input type='text' placeholder='Subject' name='subject' value={formData.subject} onChange={handleInputChange} />
             <input type='text' placeholder='Description' name='description' value={formData.description} onChange={handleInputChange} />
-            <button className="b1" type='submit' style={{ marginBottom: '-1px', marginLeft: '400px' }}>Submit Request</button>
+            <button className="b1" type='submit' style={{ marginBottom: '-1px', marginLeft: '0' }}>Submit Request</button>
           </form>
         </div>
       </section>
