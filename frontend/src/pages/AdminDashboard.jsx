@@ -531,6 +531,32 @@ const AdminDashboard = () => {
     setAdminId(e.target.value);
   };
 
+
+ // Function to handle edit button click
+ const handleEdit = (id) => {
+  // Implement logic to open edit modal or navigate to edit page
+  console.log(`Editing user/contact with ID: ${id}`);
+};
+
+// Function to handle delete button click
+const handleDelete = async (id, type) => {
+  try {
+    await axios.delete(`/api/${type}/${id}`);
+    toast.success(`${type} deleted successfully`);
+    // Refresh data after deletion
+    fetchData();
+  } catch (error) {
+    console.error('Error deleting data:', error);
+    toast.error('Failed to delete data');
+  }
+};
+
+
+
+
+
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {

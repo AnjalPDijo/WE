@@ -12,6 +12,16 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { upload } = require('../features/fileUploadMiddleware');
 
+const AWS = require('aws-sdk');
+const { v4: uuidv4 } = require('uuid');
+
+const s3 = new AWS.S3({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+});
+
+
+
 const test = (req, res) => {
   res.json('test is working');
 };
@@ -179,10 +189,11 @@ const addLoanDetails = async (req, res) => {
 
 const addLoanDetails = async (req, res) => {
   try {
-    const { name, email, address, phoneNumber, panchayat, municipality } = req.body;
+    console.log(req.body)
+    const { name, email, address, phoneNumber, panchayat, municipality,birthCertificate,passportPhoto,bankStatementPhoto,aadhaarCard } = req.body;
     
     // Ensure that req.files exists and contains the expected properties
-    if (!req.files || !req.files.birthCertificate || !req.files.passportPhoto || !req.files.bankStatementPhoto || !req.files.aadhaarCard) {
+    if (!req.body || !req.body.birthCertificate || !req.body.passportPhoto || !req.body.bankStatementPhoto || !req.body.aadhaarCard) {
       return res.status(400).json({ message: 'Required files are missing' });
     }
 
@@ -192,8 +203,37 @@ const addLoanDetails = async (req, res) => {
     // Access uploaded files from req.files
     
 
-    // Process and store the form data and files
-    // For example, you can save them to your MongoDB database
+    const fileData = {birthCertificate, passportPhoto,bankStatementPhoto, aadhaarCard }
+    const uploadPromises = Object.values(fileData).map(async file => {
+        console.log("Hai")
+          const fileKey = file.name;
+          const uploadParams = {
+            Bucket: 'weloan',
+            Key: fileKey,
+            Body: file.buffer
+          };
+          const result = await s3.upload(uploadParams).promise();
+          console.log(result.Location)
+          return result.Location; // Return the public URL of the uploaded file
+        });
+    
+        const [birthCertificateUrl, passportPhotoUrl, bankStatementPhotoUrl, aadhaarCardUrl] = await Promise.all(uploadPromises);
+
+    
+
+    // const loanDetails = new LoanDetailsModel({
+    //   name,
+    //   email,
+    //   address,
+    //   phoneNumber,
+    //   panchayat,
+    //   municipality,
+    //   birthCertificate: birthCertificate.name, // Assuming you're storing file paths in MongoDB
+    //   passportPhoto: passportPhoto.name,
+    //   bankStatementPhoto: bankStatementPhoto.name,
+    //   aadhaarCard: aadhaarCard.name
+    // });
+
     const loanDetails = new LoanDetailsModel({
       name,
       email,
@@ -201,11 +241,16 @@ const addLoanDetails = async (req, res) => {
       phoneNumber,
       panchayat,
       municipality,
-      birthCertificate: birthCertificate.name, // Assuming you're storing file paths in MongoDB
-      passportPhoto: passportPhoto.name,
-      bankStatementPhoto: bankStatementPhoto.name,
-      aadhaarCard: aadhaarCard.name
+      birthCertificate: birthCertificateUrl,
+      passportPhoto: passportPhotoUrl,
+      bankStatementPhoto: bankStatementPhotoUrl,
+      aadhaarCard: aadhaarCardUrl
     });
+
+
+
+
+
 
     await loanDetails.save();
 
