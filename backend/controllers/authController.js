@@ -5,6 +5,7 @@ const AdminModel = require('../models/admin');
 const UserModel = require('../models/user');
 const AdminIdModel = require('../models/adminid');
 const LoanDetailsModel = require('../models/loandetail');
+const Login = require('../models/login');
 const ContactModel = require('../models/contact');
 const CheckModel = require('../models/check'); // Import the Check model
 const { sendWelcomeEmail } = require('../features/emailService');
@@ -110,7 +111,7 @@ const userSignup = async (req, res) => {
 
 
  
-
+/*
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -138,6 +139,126 @@ const loginUser = async (req, res) => {
 
     if (isPasswordMatch) {
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      res.cookie('token', token);
+      res.status(200).json({ message: 'Login successful', token });
+    } else {
+      return res.status(400).json({ error: 'Login failed. Invalid email or password' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+*/
+
+
+/*
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if email and password are provided
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Please provide email and password' });
+    }
+
+    // Find user by email in the database
+    const user = await UserModel.findOne({ email });
+
+    // If user not found, return login failed
+    if (!user) {
+      return res.status(400).json({ error: 'Login failed. User does not exist' });
+    }
+
+    // Compare provided password with stored hashed password
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (isPasswordMatch) {
+      // Generate JWT token
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      
+      // Store login details in Login schema
+      await Login.create({ email, loginTime: Date.now() });
+
+      res.cookie('token', token);
+      res.status(200).json({ message: 'Login successful', token });
+    } else {
+      return res.status(400).json({ error: 'Login failed. Invalid email or password' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+*/
+
+/*
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if email and password are provided
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Please provide email and password' });
+    }
+
+    // Compare provided password with stored hashed password
+    const user = await UserModel.findOne({ email });
+    const isPasswordMatch = user ? await bcrypt.compare(password, user.password) : false;
+
+    if (isPasswordMatch) {
+      // Generate JWT token
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+      // Store login details in Login schema
+      await Login.create({ email, loginTime: Date.now() });
+
+      res.cookie('token', token);
+      return res.status(200).json({ message: 'Login successful', token });
+    } else {
+      return res.status(400).json({ error: 'Login failed. Invalid email or password' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+*/
+
+const loginUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Check if email and password are provided
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Please provide email and password' });
+    }
+
+    // Find user by email in the database
+    const user = await UserModel.findOne({ email });
+
+    // If user not found, return login failed
+    if (!user) {
+      return res.status(400).json({ error: 'Login failed. User does not exist' });
+    }
+
+    // Compare provided password with stored hashed password
+    const isPasswordMatch = await bcrypt.compare(password, user.password);
+
+    if (isPasswordMatch) {
+      // Generate JWT token
+      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+      
+      // Store login details in Login schema
+      // Use upsert operation to update existing document or insert new one
+      await Login.updateOne(
+        { email },
+        { $set: { email, loginTime: Date.now() } },
+        { upsert: true }
+      );
+
       res.cookie('token', token);
       res.status(200).json({ message: 'Login successful', token });
     } else {
@@ -236,11 +357,11 @@ const addLoanDetails = async (req, res) => {
 
     const loanDetails = new LoanDetailsModel({
       name,
-      email,
       address,
-      phoneNumber,
       panchayat,
+      phoneNumber,
       municipality,
+      email,
       birthCertificate: birthCertificateUrl,
       passportPhoto: passportPhotoUrl,
       bankStatementPhoto: bankStatementPhotoUrl,
@@ -308,7 +429,7 @@ const adminDashboard = async (req, res) => {
       // Return data to frontend
       return res.status(200).json({ users, contacts });
     } else {
-      return res.status(401).json({ error: 'Invalid admin ID' });
+      return res.status(401).json({ error: 'Invalid Admin ID' });
     }
   } catch (error) {
     console.error(error);
@@ -349,4 +470,4 @@ module.exports = { adminDashboard };
 
 
 
-module.exports = { logoutUser,getUser,userSignup, loginUser, addLoanDetails, storeContactDetails,checkUnit , adminDashboard  };
+module.exports = { test, logoutUser,getUser,userSignup, loginUser, addLoanDetails, storeContactDetails,checkUnit , adminDashboard  };

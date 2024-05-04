@@ -1,9 +1,14 @@
 const express = require('express');
 const router = express.Router();
+const AdminModel = require('../models/admin');
 const UserModel = require('../models/user');
+const AdminIdModel = require('../models/adminid');
+const LoanDetailsModel = require('../models/loandetail');
+const Login = require('../models/login');
 const ContactModel = require('../models/contact');
-const cors = require('cors');
-const {logoutUser,getUser, userSignup, loginUser, addLoanDetails, storeContactDetails,checkUnit, adminDashboard } = require('../controllers/authController');
+const CheckModel = require('../models/check');
+//const cors = require('cors');
+const {test,logoutUser,getUser, userSignup, loginUser, addLoanDetails, storeContactDetails,checkUnit, adminDashboard } = require('../controllers/authController');
 const { sendWelcomeEmail } = require('../features/emailService');
 const { upload } = require('../features/fileUploadMiddleware'); // Import Multer middleware
 const checkAuth = require('../middleware/checkAuth')
@@ -15,8 +20,8 @@ const checkAuth = require('../middleware/checkAuth')
     })
 );*/}
 
-//router.get('/', test);
-//router.post('/', );
+router.get('/', test);
+//router.get('/' );
 router.post('/signup', userSignup);
 //router.post('/admin/signup', adminSignup);
 router.get('/user',checkAuth,getUser)
@@ -80,11 +85,33 @@ router.get('/contacts', async (req, res) => {
   }
 });
 
+
+// Route to store login details
+router.post('/login-details', async (req, res) => {
+  try {
+    const { email } = req.body;
+    let user = await User.findOne({ email });
+    if (!user) {
+      // If the user doesn't exist, return a message indicating so
+      return res.status(404).json({ message: "User not found" });
+    }
+    // Save the login details
+    await User.findOneAndUpdate({ email }, { $set: { loginTime: Date.now() } });
+    res.sendStatus(200);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+});
+
+
+
+
 module.exports = router;
 
 
 
-module.exports = router;
+
 
 
 

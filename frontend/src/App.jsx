@@ -79,6 +79,8 @@ function App() {
   return (
     <Router>
       <Navbar loggedInUser={loggedInUser} onLogout={handleLogout} />
+      {/* <Navbar setUserName={setUserName} /> */}
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signin" element={<Signin setLoggedInUser={setLoggedInUser} />} />

@@ -108,6 +108,10 @@ function LoanApplicationForm() {
       } else {
         toast.error("Failed to store details. Please try again later.");
       }
+     /* if (!formData.panchayat && !formData.municipality) {
+        toast.error("Please fill out either Panchayat or Municipality");
+        return;
+      }*/
     } catch (error) {
       console.error(error);
       toast.error("An error occurred. Please try again later.");
