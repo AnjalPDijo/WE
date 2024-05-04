@@ -47,7 +47,7 @@ function App() {
 export default App;
 */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from '../src/Components/Navbar';
 import Home from '../src/pages/Home';
@@ -56,14 +56,14 @@ import Signin from './pages/Signin';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Calculator from './common/calculator/calculator';
-import LoanApplicationForm from './pages/Loandetails';
-import Grading from './pages/Grading'
+import Grading from './pages/Grading';
 import AdminDashboard from './pages/AdminDashboard';
 import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import LoanApplicationForm from './pages/LoanApplicationForm';
 
 axios.defaults.baseURL = 'http://localhost:8000';
 axios.defaults.withCredentials = true;
@@ -87,7 +87,7 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
-        <Route path="/loandetails" element={<LoanApplicationForm />} />
+        <Route path="/loandetails" element={<LoanApplicationForm/>} />
         <Route path="/calculator" element={<Calculator />} />
         <Route path="/grading" element={<Grading />} />
         <Route path="/dash" element={<AdminDashboard/>} />

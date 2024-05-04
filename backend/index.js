@@ -188,7 +188,7 @@ app.use(cors({
 }));
 
 // Database connection
-mongoose.connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URL)
   .then(async () => {
     console.log('Database Connected');
 

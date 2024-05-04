@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import './Loandetails.css';
+import { useState } from 'react';
+import './loanDetails.css';
 import Featured from '../Components/featured/Featured';
 import axios from 'axios';
 import { toast } from 'react-toastify';
