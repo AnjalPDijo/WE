@@ -51,6 +51,7 @@ body {
 }
 .container {
   max-width: 80%;
+ 
   margin: auto;
   
  
@@ -125,7 +126,7 @@ h4 {
 }
 .shadow {
   box-shadow: 0 0 20px 0 rgb(112 121 138 / 18%);
- 
+  
 }
 .padding {
   padding: 80px 0;
