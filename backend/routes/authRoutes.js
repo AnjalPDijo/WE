@@ -36,7 +36,7 @@ router.post('/checkdash',adminDashboard );
 //admin dashboard
 
 
-router.post('/loandetails', upload.any(), addLoanDetails); // Apply Multer middleware
+router.post('/loandetails',addLoanDetails); // Apply Multer middleware
 
 
 

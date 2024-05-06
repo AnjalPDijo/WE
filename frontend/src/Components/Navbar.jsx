@@ -430,8 +430,9 @@ const Navbar = () => {
         console.log(response);
         setUserName(response.data.user.name);
       } catch (error) {
-        navigate('/signin')
-        toast.error('Failed to fetch user data');
+        toast.dismiss()
+        navigate('/')
+        toast.error('Please login to continue');
       }
     };
   

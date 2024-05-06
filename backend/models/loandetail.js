@@ -8,13 +8,11 @@ const LoanDetailsSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    match: /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
-  },
   address: {
+    type: String,
+    required: true
+  },
+  panchayatOrmunicipality: {
     type: String,
     required: true
   },
@@ -22,13 +20,11 @@ const LoanDetailsSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  panchayat: {
+  email: {
     type: String,
-    required: true
-  },
-  municipality: {
-    type: String,
-    required: true
+    required: true,
+    unique: true,
+    match: /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
   },
   birthCertificate: {
     type: String,
