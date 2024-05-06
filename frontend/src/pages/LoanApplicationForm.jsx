@@ -81,6 +81,7 @@ function LoanApplicationForm() {
     }
   };
   */
+  // const [submitted, setSubmitted] = useState(false);
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -104,6 +105,7 @@ function LoanApplicationForm() {
           bankStatementPhoto: null,
           aadhaarCard: null
         });
+        // setSubmitted(true);
         toast.success("Loan Details collected successfully!");
       } else {
         toast.error("Failed to store details. Please try again later.");
@@ -225,7 +227,9 @@ function LoanApplicationForm() {
  
         <button className="bn1" type="submit" style={{ marginLeft: '200px' }}>Submit Application</button>
       </form>
+      <br></br>
       <Featured />
+      {/* {submitted && <Featured />} */}
     </div>
   );
 }

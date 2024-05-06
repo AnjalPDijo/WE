@@ -430,6 +430,7 @@ const Navbar = () => {
         console.log(response);
         setUserName(response.data.user.name);
       } catch (error) {
+  
         navigate('/')
         // toast.error('Please login to continue');
       }
