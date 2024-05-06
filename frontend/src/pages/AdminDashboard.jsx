@@ -575,20 +575,26 @@ const handleDelete = async (id, type) => {
 
   return (
     <div className="admin-dashboard">
-      <h2>Admin Dashboard</h2>
-      <form onSubmit={handleSubmit}>
+      <h2 style={{Topmargin:'100px'}}>Admin Dashboard</h2>
+      <form onSubmit={handleSubmit}class='f1'>
         <label htmlFor="adminid">Enter Admin ID:</label>
         <input type="text" id="adminid" value={adminid} onChange={handleAdminIdChange} />
-        <button type="submit">View Data</button>
+        <button type="submit" class="b"style={{ marginBottom: '8px',marginTop: '15px'}}>View Data</button>
       </form>
 
       {validAdmin && userData.length > 0 && contactData.length > 0 && (
         <>
+       
+        
           <div className="table-container">
-            <h3 className="table-header">User Details</h3>
+            <h3 className="table-header">User <span>{' '}Details{' '}</span>Table</h3>
+           
+          
             <table className="data-table">
               <thead>
+              <br></br><br></br><br></br>
                 <tr>
+                
                   <th>Name</th>
                   <th>Email</th>
                   <th>Ward No</th>
@@ -609,9 +615,10 @@ const handleDelete = async (id, type) => {
           </div>
 
           <div className="table-container">
-            <h3 className="table-header">Contact Queries</h3>
+            <h3 className="table-header" style={{Leftmargin:'10px'}}>Contact<span>{' '}Queries{' '}</span>Table</h3>
             <table className="data-table">
               <thead>
+              <br></br><br></br><br></br>
                 <tr>
                   <th>Name</th>
                   <th>Email</th>

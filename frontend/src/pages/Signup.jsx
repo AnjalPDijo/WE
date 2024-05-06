@@ -147,19 +147,22 @@ const Signup = () => {
 
   return (
     <>
-      <section className='contact mb'>
+   
+      <section className='contact mb' style={{height: '180vh' }}>
         <Back title='Please Sign Up And Get Our Help' name='Sign Up' cover={img} />
-        <div className='container'>
-          <form className='shadow' onSubmit={handleFormSubmit} style={{ marginTop: '10px' }}>
-            <h4>Please enter your details to sign up</h4> <br />
+        <br></br>
+        <div className='container' style={{height: '100vh' }} >
+          <form className='shadow' onSubmit={handleFormSubmit} style={{ marginTop: '40px',height: '100vh' }}>
+            <h4 style={{ marginTop: '40px' }}>Please enter your details to sign up</h4> <br />
             <input type='text' placeholder='Name' name='name' value={formData.name} onChange={handleInputChange} />
             <input type='email' placeholder='Email' name='email' value={formData.email} onChange={handleInputChange} />
             <input type='password' placeholder='Password' name='password' value={formData.password} onChange={handleInputChange} />
             <input type='password' placeholder='Repeat Your Password' name='repeatPassword' value={formData.repeatPassword} onChange={handleInputChange} />
             <input type='text' placeholder='Ward Number' name='wardNo' value={formData.wardNo} onChange={handleInputChange} />
             <input type='text' placeholder='Panchayat/Municipality' name='panchayatOrMunicipality' value={formData.panchayatOrMunicipality} onChange={handleInputChange} />
-            <button className="b1" type='submit'>Submit Request</button>
-          </form>
+            <button className="b1" type='submit' style={{ marginTop: '20px',marginBottom:'20px'}}>Submit Request</button>
+        </form>
+          
         </div>
       </section>
     </>
