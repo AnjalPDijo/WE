@@ -41,6 +41,50 @@ function LoanApplicationForm() {
   
   
   
+<<<<<<< HEAD
+=======
+    // Check if exactly four files are uploaded
+    const uploadedFiles = [formData.birthCertificate, formData.passportPhoto, formData.bankStatementPhoto, formData.aadhaarCard];
+    const numUploadedFiles = uploadedFiles.filter(file => file !== null).length;
+    
+    if (numUploadedFiles !== 4) {
+      toast.error("Please upload exactly four files");
+      return;
+    }
+  
+    try {
+      const formDataToSend = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        formDataToSend.append(key, value);
+      });
+  
+      const response = await axios.post('/loandetails', formDataToSend);
+      if (response.status === 201) {
+        // Clear form fields after successful submission
+        setFormData({
+          name: '',
+          address: '',
+          panchayat: '',
+          phoneNumber: '',
+          municipality: '',
+          email: '',
+          birthCertificate: null,
+          passportPhoto: null,
+          bankStatementPhoto: null,
+          aadhaarCard: null
+        });
+        toast.success("Loan Details collected successfully!");
+      } else {
+        toast.error("Failed to store details. Please try again later.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("An error occurred. Please try again later.");
+    }
+  };
+  */
+  // const [submitted, setSubmitted] = useState(false);
+>>>>>>> 09001d47070c09f0b7e36a10b398853dc79d2b8b
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -63,6 +107,7 @@ function LoanApplicationForm() {
           bankStatementPhoto: null,
           aadhaarCard: null
         });
+        // setSubmitted(true);
         toast.success("Loan Details collected successfully!");
       } else {
         toast.error("Failed to store details. Please try again later.");
@@ -174,7 +219,9 @@ function LoanApplicationForm() {
  
         <button className="bn1" type="submit" style={{ marginLeft: '200px' }}>Submit Application</button>
       </form>
+      <br></br>
       <Featured />
+      {/* {submitted && <Featured />} */}
     </div>
   );
 }
