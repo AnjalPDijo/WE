@@ -4,11 +4,13 @@
 
 input::placeholder {
     color: #999; 
+
   }
   
 .contact
 {
     margin-bottom: 500px;
+   
 }
 
 /* Assuming this is your CSS file (e.g., Signup.css) */
@@ -26,6 +28,7 @@ input::placeholder {
 .radio-container {
   display: flex;
   align-items: center;
+ 
   margin-bottom: 10px; /* Add margin bottom for spacing */
 }
 
@@ -39,4 +42,3 @@ input[type='radio'] {
 label {
   vertical-align: middle; /* Align labels vertically */
 }
-

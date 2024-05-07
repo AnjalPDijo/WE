@@ -433,6 +433,7 @@ const Navbar = () => {
         toast.dismiss()
         navigate('/')
         toast.error('Please login to continue');
+
       }
     };
   

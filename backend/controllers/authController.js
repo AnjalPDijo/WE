@@ -358,10 +358,18 @@ const addLoanDetails = async (req, res) => {
 const addLoanDetails = async (req, res) => {
 
     try {
-      if (!req.files) {
-        return res.status(400).json({ message: 'No files uploaded' });
-      }
-    console.log(req.files);
+    // if (!req.files) {
+     //   return res.status(400).json({ message: 'No files uploaded' });
+      
+
+     const filesArray = Object.values(req.files);
+     console.log('Files array:', filesArray);
+    const requiredFiles = ['birthCertificate', 'passportPhoto', 'bankStatementPhoto', 'aadhaarCard'];
+    const missingFiles = requiredFiles.filter(fieldName => !filesArray.some(file => file.fieldname === fieldName));
+    if (missingFiles.length > 0) {
+      return res.status(400).json({ message: `Required files are missing: ${missingFiles.join(', ')}` });
+    }
+    /*console.log(req.files);
     const filesArray = Object.values(req.files);
     
     const { name, address, panchayatOrmunicipality, phoneNumber, email } = req.body;
@@ -388,16 +396,48 @@ const addLoanDetails = async (req, res) => {
         throw uploadError;
       }
     });
+*/
+const { name, address, panchayatOrmunicipality, phoneNumber,email } =
+            req.body;
+
+        const [
+            birthCertificate,
+            passportPhoto,
+            bankStatementPhoto,
+            aadhaarCard,
+        ] = req.files;
+
+        const fileData = {
+            birthCertificate,
+            passportPhoto,
+            bankStatementPhoto,
+            aadhaarCard,
+        };
+        const uploadPromises = Object.values(fileData).map(async (file) => {
+            const fileKey = file.filename;
+            const buffer = fs.readFileSync(file.path);
+            const uploadParams = {
+                Bucket: "weloan2",
+                Key: fileKey,
+                Body: buffer,
+            };
+            const result = await s3.upload(uploadParams).promise();
+            return result.Location; // Return the public URL of the uploaded file
+        });
+    
+
+    
 
     const uploadResults = await Promise.allSettled(uploadPromises);
     const uploadSuccesses = uploadResults.filter(result => result.status === 'fulfilled').map(result => result.value);
-
+    console.log("uploaded")
     if (uploadSuccesses.length !== 4) {
       return res.status(500).json({ message: 'Failed to upload all files' });
     }
 
-    const [birthCertificateUrl, passportPhotoUrl, bankStatementPhotoUrl, aadhaarCardUrl] = uploadSuccesses;
 
+    const [birthCertificateUrl, passportPhotoUrl, bankStatementPhotoUrl, aadhaarCardUrl] = uploadSuccesses;
+    
     const loanDetails = new LoanDetailsModel({
       name,
       address,

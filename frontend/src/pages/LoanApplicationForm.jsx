@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import './loanDetails.css';
+import './Loandetails.css';
 import Featured from '../Components/featured/Featured';
 import axios from 'axios';
 import { toast } from 'react-toastify';
@@ -8,9 +8,8 @@ function LoanApplicationForm() {
   const [formData, setFormData] = useState({
     name: '',
     address: '',
-    panchayat: '',
+    panchayatOrmunicipality: '',
     phoneNumber: '',
-    municipality: '',
     email: '',
     birthCertificate: null,
     passportPhoto: null,
@@ -19,7 +18,7 @@ function LoanApplicationForm() {
   });
 
 
-  const handleChange = (e) => {
+  /*const handleChange = (e) => {
     const { name, type } = e.target;
     const updatedValue = type === 'file' ? e.target.files[0] : e.target.value;
     
@@ -27,60 +26,21 @@ function LoanApplicationForm() {
       ...formData,
       [name]: updatedValue,
     });
+  };*/
+
+
+  const handleChange = (e) => {
+    const { name, type, value, files } = e.target;
+    const updatedValue = type === 'file' ? files[0] : value;
+    
+    setFormData({
+      ...formData,
+      [name]: updatedValue,
+    });
   };
   
-  /*const handleSubmit = async (e) => {
-    e.preventDefault();
   
-    // Check if all fields are filled
-    const formFields = Object.values(formData);
-    const areAllFieldsFilled = formFields.every(field => field !== '' && field !== null);
-    
-    if (!areAllFieldsFilled) {
-      toast.error("Please fill out all fields");
-      return;
-    }
   
-    // Check if exactly four files are uploaded
-    const uploadedFiles = [formData.birthCertificate, formData.passportPhoto, formData.bankStatementPhoto, formData.aadhaarCard];
-    const numUploadedFiles = uploadedFiles.filter(file => file !== null).length;
-    
-    if (numUploadedFiles !== 4) {
-      toast.error("Please upload exactly four files");
-      return;
-    }
-  
-    try {
-      const formDataToSend = new FormData();
-      Object.entries(formData).forEach(([key, value]) => {
-        formDataToSend.append(key, value);
-      });
-  
-      const response = await axios.post('/loandetails', formDataToSend);
-      if (response.status === 201) {
-        // Clear form fields after successful submission
-        setFormData({
-          name: '',
-          address: '',
-          panchayat: '',
-          phoneNumber: '',
-          municipality: '',
-          email: '',
-          birthCertificate: null,
-          passportPhoto: null,
-          bankStatementPhoto: null,
-          aadhaarCard: null
-        });
-        toast.success("Loan Details collected successfully!");
-      } else {
-        toast.error("Failed to store details. Please try again later.");
-      }
-    } catch (error) {
-      console.error(error);
-      toast.error("An error occurred. Please try again later.");
-    }
-  };
-  */
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -95,9 +55,8 @@ function LoanApplicationForm() {
         setFormData({
           name: '',
           address: '',
-          panchayat: '',
+          panchayatOrmunicipality: '',
           phoneNumber: '',
-          municipality: '',
           email: '',
           birthCertificate: null,
           passportPhoto: null,
@@ -144,11 +103,11 @@ function LoanApplicationForm() {
           />
         </div>
         <div>
-          <label>Panchayat:</label>
+          <label>Panchayat/Municipality:</label>
           <input
             type="text"
-            name="panchayat"
-            value={formData.panchayat}
+            name="panchayatOrmunicipality"
+            value={formData.panchayatOrmunicipality}
             onChange={handleChange}
             required
           />
@@ -159,16 +118,6 @@ function LoanApplicationForm() {
             type="tel"
             name="phoneNumber"
             value={formData.phoneNumber}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div>
-          <label>Municipality:</label>
-          <input
-            type="text"
-            name="municipality"
-            value={formData.municipality}
             onChange={handleChange}
             required
           />
