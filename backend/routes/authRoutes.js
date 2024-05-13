@@ -8,9 +8,9 @@ const Login = require('../models/login');
 const ContactModel = require('../models/contact');
 const CheckModel = require('../models/check');
 //const cors = require('cors');
-const {test,logoutUser,getUser, userSignup, loginUser, addLoanDetails, storeContactDetails,checkUnit, adminDashboard } = require('../controllers/authController');
+//const {addLoanDetails} =require('../controllers/uploadController');
+const {test,logoutUser,getUser, userSignup, loginUser, storeContactDetails,checkUnit, adminDashboard } = require('../controllers/authController');
 const { sendWelcomeEmail } = require('../features/emailService');
-const { upload } = require('../features/fileUploadMiddleware'); // Import Multer middleware
 const checkAuth = require('../middleware/checkAuth')
 
 {/*router.use(
@@ -33,10 +33,11 @@ router.post('/sendemail',sendWelcomeEmail);
 router.post('/contact',storeContactDetails);
 router.post('/check', checkUnit);
 router.post('/checkdash',adminDashboard );
+//router.post('/loan',addLoanDetails);
 //admin dashboard
 
 
-router.post('/loandetails',addLoanDetails); // Apply Multer middleware
+//router.post('/loandetails',addLoanDetails); // Apply Multer middleware
 
 
 
@@ -84,6 +85,17 @@ router.get('/contacts', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+// Route to fetch check data
+router.get('/checks', async (req, res) => {
+  try {
+    const checks = await CheckModel.find();
+    res.status(200).json(checks);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 
 
 // Route to store login details

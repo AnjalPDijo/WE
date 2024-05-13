@@ -12,7 +12,7 @@ const loginSchema = new mongoose.Schema({
   },
   submissionStatus: {
     type: String,
-    enum: ['pending', 'approved', 'rejected'],
+    enum: ['pending','submitted'],
     default: 'pending'
   }
 });

@@ -157,7 +157,7 @@ const GradingForm = () => {
         <div>
           <button>
             {/* <Link to="./loandetails">Click here to view loan details</Link> */}
-            <a href="./loandetails">Click here to view loan details</a>
+            <a href="./api/upload">Click here to view loan details</a>
           </button>
         </div>
       )}

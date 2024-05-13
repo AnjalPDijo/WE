@@ -1,5 +1,5 @@
 // emailService.js
-const nodemailer = require('nodemailer');
+/*const nodemailer = require('nodemailer');
 
 // Create transporter with app password
 const transporter = nodemailer.createTransport({
@@ -39,4 +39,45 @@ const sendWelcomeEmail = (email, name, role) => {
   });
 };
 
+module.exports = { sendWelcomeEmail };*/
+
+
+const nodemailer = require('nodemailer');
+
+// Create transporter with app password
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'anjalpdijo01@gmail.com', // Your Gmail email address
+    pass: process.env.EMAIL_APP_PASS // Your Gmail app password
+  }
+});
+
+
+
+
+
+// Function to send welcome email for user registration
+const sendWelcomeEmail = (email, name) => {
+  const subject = 'Welcome to WELOAN - User Registration';
+  const body = `Subject: ${subject}\n\nDear ${name},\n\nWelcome to the WELOAN Community!\n\nSincerely,\nThe WELOAN Team`;
+
+  const mailOptions = {
+    from: 'anjalpdijo01@gmail.com',
+    to: email,
+    subject: subject,
+    text: body
+  };
+
+  // Send email
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('Error sending email:', error);
+    } else {
+      console.log('Email sent:', info.response);
+    }
+  });
+};
+
 module.exports = { sendWelcomeEmail };
+

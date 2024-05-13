@@ -1,50 +1,46 @@
-
+// loandetail.js
 
 const mongoose = require('mongoose');
 
-// Define LoanDetails schema
-const LoanDetailsSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: true
-  },
-  address: {
-    type: String,
-    required: true
-  },
-  panchayatOrmunicipality: {
-    type: String,
-    required: true
-  },
-  phoneNumber: {
-    type: String,
-    required: true
-  },
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    match: /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/
-  },
-  birthCertificate: {
-    type: String,
-    required: true
-  },
-  passportPhoto: {
-    type: String,
-    required: true
-  },
-  bankStatementPhoto: {
-    type: String,
-    required: true
-  },
-  aadhaarCard: {
-    type: String,
-    required: true
-  }
+const loanDetailSchema = new mongoose.Schema({
+    name: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        //required: true
+    },
+    phone: {
+      type: String,
+      required: true
+    },
+    panchayatOrmunicipality: {
+        type: String,
+        required: true
+    },
+    address: {
+        type: String,
+        required: true
+    },
+    birthCertificate: {
+        type: String,
+        required: true
+    },
+    aadhaarCard: {
+        type: String,
+        required: true // Make sure this field is marked as required if necessary
+    },
+    passportPhoto:{
+      type: String,
+      required: true
+    },
+    bankStatement:{
+      type: String,
+      required: true
+    }
 });
 
-// Create and export LoanDetails model
+const LoanDetailsModel = mongoose.model('LoanDetails', loanDetailSchema);
 
-const LoanDetailsModel = mongoose.model('LoanApplicationForm', LoanDetailsSchema);
 module.exports = LoanDetailsModel;

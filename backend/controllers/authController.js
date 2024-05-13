@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const fs = require("fs");
+require('dotenv').config();
 const multer = require('multer');
 const AdminModel = require('../models/admin');
 const UserModel = require('../models/user');
@@ -11,23 +13,13 @@ const CheckModel = require('../models/check'); // Import the Check model
 const { sendWelcomeEmail } = require('../features/emailService');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { upload } = require('../features/fileUploadMiddleware');
+//const { upload,storage, fileFilter, multer } = require('../features/fileUploadMiddleware');
 
 
 //const { v4: uuidv4 } = require('uuid');
 
-const AWS = require('aws-sdk');
-
-/*AWS.config.update({
-  accessKeyId: 'your-access-key-id',
-  secretAccessKey: 'your-secret-access-key'
-});*/
 
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-});
 
 
 
@@ -68,10 +60,13 @@ const userSignup = async (req, res) => {
       });
   
       await newUser.save();
-  
+      sendWelcomeEmail(email, name);
       // Removed sending welcome email for brevity
   
       return res.status(201).json({ message: 'Registration successful' });
+      
+      //return res.status(201).json({ message: 'Email is sent' });
+
     } catch (error) {
       console.error(error);
       return res.status(500).json({ error: 'Internal Server Error' });
@@ -79,9 +74,7 @@ const userSignup = async (req, res) => {
   };
   
 
- // Import the AdminIdModel
- 
- 
+ // home page
 
  const checkUnit = async (req, res) => {
   const { district, unitNo, unitName } = req.body;
@@ -100,141 +93,7 @@ const userSignup = async (req, res) => {
   }
 };
 
-
-
-
- 
-
- 
-
-
-
-
- 
- 
- 
- 
-
- 
-
-
- 
-/*
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Check if email and password are provided
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Please provide email and password' });
-    }
-
-    // Find user by email in the database
-    const user = await UserModel.findOne({ email });
-
-    // If user not found, return login failed
-    if (!user) {
-      return res.status(400).json({ error: 'Login failed. User does not exist' });
-    }
-    //const upassword = await UserModel.findOne({ password });
-    // Compare provided password with stored hashed password
-    console.log('Provided Password:', password);
-    console.log('Stored Password:', user.password);
-
-
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-    console.log('isPasswordMatch:', isPasswordMatch);
-
-    if (isPasswordMatch) {
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      res.cookie('token', token);
-      res.status(200).json({ message: 'Login successful', token });
-    } else {
-      return res.status(400).json({ error: 'Login failed. Invalid email or password' });
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
-*/
-
-
-/*
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Check if email and password are provided
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Please provide email and password' });
-    }
-
-    // Find user by email in the database
-    const user = await UserModel.findOne({ email });
-
-    // If user not found, return login failed
-    if (!user) {
-      return res.status(400).json({ error: 'Login failed. User does not exist' });
-    }
-
-    // Compare provided password with stored hashed password
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-
-    if (isPasswordMatch) {
-      // Generate JWT token
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-      
-      // Store login details in Login schema
-      await Login.create({ email, loginTime: Date.now() });
-
-      res.cookie('token', token);
-      res.status(200).json({ message: 'Login successful', token });
-    } else {
-      return res.status(400).json({ error: 'Login failed. Invalid email or password' });
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-
-*/
-
-/*
-const loginUser = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Check if email and password are provided
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Please provide email and password' });
-    }
-
-    // Compare provided password with stored hashed password
-    const user = await UserModel.findOne({ email });
-    const isPasswordMatch = user ? await bcrypt.compare(password, user.password) : false;
-
-    if (isPasswordMatch) {
-      // Generate JWT token
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-
-      // Store login details in Login schema
-      await Login.create({ email, loginTime: Date.now() });
-
-      res.cookie('token', token);
-      return res.status(200).json({ message: 'Login successful', token });
-    } else {
-      return res.status(400).json({ error: 'Login failed. Invalid email or password' });
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: 'Internal Server Error' });
-  }
-};
-*/
-
+//signin page
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -280,191 +139,127 @@ const loginUser = async (req, res) => {
 
 
 
+// const addLoanDetails = async (req, res) => {
 
-
-
- 
-
-
-
-
-
- 
-
-
-
-
-/*
-const addLoanDetails = async (req, res) => {
-  try {
-    console.log(req.files);
-    const filesArray = Object.values(req.files);
-    
-    const { name, address, panchayatOrmunicipality, phoneNumber, email } = req.body;
-    const [birthCertificate, passportPhoto, bankStatementPhoto, aadhaarCard] = filesArray;
-
-    const fileData = { birthCertificate, passportPhoto, bankStatementPhoto, aadhaarCard };
-    const uploadPromises = Object.values(fileData).map(async file => {
-      console.log("Uploading file...");
-      console.log(file);
-      const fileKey = file.name;
-      const uploadParams = {
-        Bucket: 'weloan2',
-        Key: fileKey,
-        Body: file.buffer
-      };
-      try {
-        const result = await s3.upload(uploadParams).promise();
-        console.log(result.Location);
-        return result.Location;
-      } catch (uploadError) {
-        console.error('Error uploading file:', uploadError);
-        throw uploadError;
-      }
-    });
-
-    const uploadResults = await Promise.allSettled(uploadPromises);
-    const uploadSuccesses = uploadResults.filter(result => result.status === 'fulfilled').map(result => result.value);
-
-    if (uploadSuccesses.length !== 4) {
-      return res.status(500).json({ message: 'Failed to upload all files' });
-    }
-
-    const [birthCertificateUrl, passportPhotoUrl, bankStatementPhotoUrl, aadhaarCardUrl] = uploadSuccesses;
-
-    const loanDetails = new LoanDetailsModel({
-      name,
-      address,
-      panchayatOrmunicipality,
-      phoneNumber,
-      email,
-      birthCertificate: birthCertificateUrl,
-      passportPhoto: passportPhotoUrl,
-      bankStatementPhoto: bankStatementPhotoUrl,
-      aadhaarCard: aadhaarCardUrl
-    });
-
-    await loanDetails.save();
-
-    res.status(201).json({ message: 'Loan details saved successfully' });
-  } catch (error) {
-    console.error('Error processing loan details:', error);
-    res.status(500).json({ message: 'Failed to process loan details' });
-  }
-};
-
-*/
-
-const addLoanDetails = async (req, res) => {
-
-    try {
-    // if (!req.files) {
-     //   return res.status(400).json({ message: 'No files uploaded' });
+//     try {
+//     // if (!req.files) {
+//      //   return res.status(400).json({ message: 'No files uploaded' });
       
 
-     const filesArray = Object.values(req.files);
-     console.log('Files array:', filesArray);
-    const requiredFiles = ['birthCertificate', 'passportPhoto', 'bankStatementPhoto', 'aadhaarCard'];
-    const missingFiles = requiredFiles.filter(fieldName => !filesArray.some(file => file.fieldname === fieldName));
-    if (missingFiles.length > 0) {
-      return res.status(400).json({ message: `Required files are missing: ${missingFiles.join(', ')}` });
-    }
-    /*console.log(req.files);
-    const filesArray = Object.values(req.files);
+//      const filesArray = Object.values(req.files);
+//     //  console.log('Files array:', filesArray);
+//     const requiredFiles = ['birthCertificate', 'passportPhoto', 'bankStatementPhoto', 'aadhaarCard'];
+//     const missingFiles = requiredFiles.filter(fieldName => !filesArray.some(file => file.fieldname === fieldName));
+//     if (missingFiles.length > 0) {
+//       return res.status(400).json({ message: `Required files are missing: ${missingFiles.join(', ')}` });
+//     }
     
-    const { name, address, panchayatOrmunicipality, phoneNumber, email } = req.body;
-    const [birthCertificate, passportPhoto, bankStatementPhoto, aadhaarCard] = filesArray;
+//     /*console.log(req.files);
+//     const filesArray = Object.values(req.files);
+    
+//     const { name, address, panchayatOrmunicipality, phoneNumber, email } = req.body;
+//     const [birthCertificate, passportPhoto, bankStatementPhoto, aadhaarCard] = filesArray;
 
-    const fileData = { birthCertificate, passportPhoto, bankStatementPhoto, aadhaarCard };
-    const uploadPromises = Object.values(fileData).map(async file => {
-      console.log("Uploading file...");
-      console.log(file);
-      const fileKey = file.name;
-      console.log('File key:', fileKey);
-      const uploadParams = {
-        Bucket: 'weloan2',
-        Key: fileKey,
-        Body: file.buffer
-      };
-      console.log('Upload params:', uploadParams); // Log upload parameters
-      try {
-        const result = await s3.upload(uploadParams).promise();
-        console.log(result.Location);
-        return result.Location;
-      } catch (uploadError) {
-        console.error('Error uploading file:', uploadError);
-        throw uploadError;
-      }
-    });
-*/
-const { name, address, panchayatOrmunicipality, phoneNumber,email } =
-            req.body;
+//     const fileData = { birthCertificate, passportPhoto, bankStatementPhoto, aadhaarCard };
+//     const uploadPromises = Object.values(fileData).map(async file => {
+//       console.log("Uploading file...");
+//       console.log(file);
+//       const fileKey = file.name;
+//       console.log('File key:', fileKey);
+//       const uploadParams = {
+//         Bucket: 'weloan2',
+//         Key: fileKey,
+//         Body: file.buffer
+//       };
+//       console.log('Upload params:', uploadParams); // Log upload parameters
+//       try {
+//         const result = await s3.upload(uploadParams).promise();
+//         console.log(result.Location);
+//         return result.Location;
+//       } catch (uploadError) {
+//         console.error('Error uploading file:', uploadError);
+//         throw uploadError;
+//       }
+//     });
+// */
+// const { name, address, panchayatOrmunicipality, phoneNumber,email } =
+//             req.body;
 
-        const [
-            birthCertificate,
-            passportPhoto,
-            bankStatementPhoto,
-            aadhaarCard,
-        ] = req.files;
+//         const [
+//             birthCertificate,
+//             passportPhoto,
+//             bankStatementPhoto,
+//             aadhaarCard,
+//         ] = req.files;
 
-        const fileData = {
-            birthCertificate,
-            passportPhoto,
-            bankStatementPhoto,
-            aadhaarCard,
-        };
-        const uploadPromises = Object.values(fileData).map(async (file) => {
-            const fileKey = file.filename;
-            const buffer = fs.readFileSync(file.path);
-            const uploadParams = {
-                Bucket: "weloan2",
-                Key: fileKey,
-                Body: buffer,
-            };
-            const result = await s3.upload(uploadParams).promise();
-            return result.Location; // Return the public URL of the uploaded file
-        });
+//         const fileData = {
+//             birthCertificate,
+//             passportPhoto,
+//             bankStatementPhoto,
+//             aadhaarCard,
+//         };
+
+//         console.log(fileData);
+//         const uploadPromises = Object.values(fileData).map(async (file) => {
+//             const fileKey = file?.filename ?? file?.originalname;
+//             console.log(file);
+//             const buffer = file?.buffer  ?? fs.readFileSync(file.path);
+//             const uploadParams = {
+//                 Bucket: "weloan2",
+//                 Key: fileKey,
+//                 Body: buffer,
+//             };
+//             const result = await s3.upload(uploadParams).promise();
+//             console.log(result.Location);
+//             return result.Location; // Return the public URL of the uploaded file
+//         });
     
 
+
+//     const uploadResults = await Promise.allSettled(uploadPromises);
+//     console.log(uploadResults);
+//     const uploadSuccesses = uploadResults.filter(result => result.status === 'fulfilled').map(result => result.value);
+//     console.log("uploaded")
+//     if (uploadSuccesses.length !== 4) {
+//       return res.status(500).json({ message: 'Failed to upload all files' });
+//     }
+
+
+//     const [birthCertificateUrl, passportPhotoUrl, bankStatementPhotoUrl, aadhaarCardUrl] = uploadSuccesses;
     
+//     const loanDetails = new LoanDetailsModel({
+//       name,
+//       address,
+//       panchayatOrmunicipality,
+//       phoneNumber,
+//       email,
+//       birthCertificate: birthCertificateUrl,
+//       passportPhoto: passportPhotoUrl,
+//       bankStatementPhoto: bankStatementPhotoUrl,
+//       aadhaarCard: aadhaarCardUrl
+//     });
 
-    const uploadResults = await Promise.allSettled(uploadPromises);
-    const uploadSuccesses = uploadResults.filter(result => result.status === 'fulfilled').map(result => result.value);
-    console.log("uploaded")
-    if (uploadSuccesses.length !== 4) {
-      return res.status(500).json({ message: 'Failed to upload all files' });
-    }
+//     await loanDetails.save();
 
-
-    const [birthCertificateUrl, passportPhotoUrl, bankStatementPhotoUrl, aadhaarCardUrl] = uploadSuccesses;
-    
-    const loanDetails = new LoanDetailsModel({
-      name,
-      address,
-      panchayatOrmunicipality,
-      phoneNumber,
-      email,
-      birthCertificate: birthCertificateUrl,
-      passportPhoto: passportPhotoUrl,
-      bankStatementPhoto: bankStatementPhotoUrl,
-      aadhaarCard: aadhaarCardUrl
-    });
-
-    await loanDetails.save();
-
-    res.status(201).json({ message: 'Loan details saved successfully' });
-  } catch (error) {
-    console.error('Error processing loan details:', error);
-    res.status(500).json({ message: 'Failed to process loan details' });
-  }
-};
+//     res.status(201).json({ message: 'Loan details saved successfully' });
+//   } catch (error) {
+//     console.error('Error processing loan details:', error);
+//     res.status(500).json({ message: 'Failed to process loan details' });
+//   }
+// };
 
 
 
 
 
 
-  
+
+
+
+
+
+
+  //contact page
 
 const storeContactDetails = async (req, res) => {
   try {
@@ -485,14 +280,8 @@ const storeContactDetails = async (req, res) => {
 };
 
 
-// adminController.js
 
-//const AdminModel = require('../models/AdminModel');
-//const UserModel = require('../models/UserModel');
-//const ContactModel = require('../models/ContactModel');
-//const LoanDetailsModel = require('../models/LoanDetailsModel');
-
-
+//admin page
 const adminDashboard = async (req, res) => {
   const { adminid } = req.body;
 
@@ -506,8 +295,10 @@ const adminDashboard = async (req, res) => {
       // Fetch data from contact schema
       const contacts = await ContactModel.find();
 
+      const checks = await CheckModel.find();
+
       // Return data to frontend
-      return res.status(200).json({ users, contacts });
+      return res.status(200).json({ users, contacts, checks });
     } else {
       return res.status(401).json({ error: 'Invalid Admin ID' });
     }
@@ -546,8 +337,8 @@ const logoutUser = async (req, res) => {
   }
 }
 
-module.exports = { adminDashboard };
 
 
 
-module.exports = { test, logoutUser,getUser,userSignup, loginUser, addLoanDetails, storeContactDetails,checkUnit , adminDashboard  };
+
+module.exports = { test, logoutUser,getUser,userSignup, loginUser, storeContactDetails,checkUnit , adminDashboard  };
