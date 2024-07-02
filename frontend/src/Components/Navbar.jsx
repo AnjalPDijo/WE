@@ -23,7 +23,7 @@ const Navbar = () => {
       } catch (error) {
         toast.dismiss()
         navigate('/')
-        toast.error('Please login to continue');
+        //toast.error('Please login to continue');
 
       }
     };

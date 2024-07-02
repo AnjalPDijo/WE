@@ -36,7 +36,7 @@ const Home = () => {
       <div className="blur-overlay"></div>
       <div className="content">
         <div className='container'>
-          <Heading title='WE-Loan' subtitle='KudumbaSree Loan Initiative' />
+          <Heading title='WE-Loan' subtitle='KudumbaShree Loan Initiative' />
 
           <form className='flex' onSubmit={handleSubmit}>
             <div className='box'>
