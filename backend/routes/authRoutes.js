@@ -9,7 +9,7 @@ const ContactModel = require('../models/contact');
 const CheckModel = require('../models/check');
 //const cors = require('cors');
 //const {addLoanDetails} =require('../controllers/uploadController');
-const {test,logoutUser,getUser, userSignup, loginUser, storeContactDetails,checkUnit, adminDashboard } = require('../controllers/authController');
+const {test,logoutUser,getUser, userSignup, loginUser,logind, storeContactDetails,checkUnit, adminDashboard } = require('../controllers/authController');
 const { sendWelcomeEmail } = require('../features/emailService');
 const checkAuth = require('../middleware/checkAuth')
 
@@ -32,6 +32,7 @@ router.get('/logout',checkAuth,logoutUser)
 router.post('/sendemail',sendWelcomeEmail);
 router.post('/contact',storeContactDetails);
 router.post('/check', checkUnit);
+//router.post('/login', logind);
 router.post('/checkdash',adminDashboard );
 //router.post('/loan',addLoanDetails);
 //admin dashboard
@@ -95,6 +96,7 @@ router.get('/checks', async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
 
 
 

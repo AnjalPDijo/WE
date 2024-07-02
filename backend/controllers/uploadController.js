@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const LoanDetailsModel = require('../models/loandetail');
+const LoginModel = require('../models/login'); // Import your Login model
 const AWS = require('aws-sdk');
 require('dotenv').config();
 const multer = require('multer');
@@ -27,15 +28,15 @@ router.post('/upload', upload.fields([
     { name: 'bankStatement', maxCount: 1 }
 ]), async (req, res) => {
     try {
-        //Check if files exist in the request
-        if ( !req.files['birthCertificate'] || !req.files['aadhaarCard'] || !req.files['passportPhoto'] || !req.files['bankStatement']) {
+        // Check if files exist in the request
+        if (!req.files['birthCertificate'] || !req.files['aadhaarCard'] || !req.files['passportPhoto'] || !req.files['bankStatement']) {
             return res.status(400).json({ error: true, message: 'All files must be uploaded' });
         }
 
         // Extract fields from request body
         const { name, email, phone, panchayatOrmunicipality, address } = req.body;
 
-        // Check if user with the same email already exists
+        // Check if user with the same email already exists in LoanDetailsModel
         const existingUser = await LoanDetailsModel.findOne({ email });
         if (existingUser) {
             // Inform client that email already exists
@@ -129,6 +130,9 @@ router.post('/upload', upload.fields([
                             bankStatement: bankStatementFileURL
                         });
                         await user.save();
+
+                        // Update submission status in LoginModel
+                        await LoginModel.updateOne({ email: email }, { submissionStatus: 'submitted' });
 
                         // Send response indicating successful upload
                         res.status(201).json({ message: 'Upload successful', data: user });
